@@ -28,6 +28,8 @@ If you wish to contribute to this project, please fork the repository and submit
 
 If you have any questions or suggestions, feel free to open an issue on GitHub or send me an email at [your email here].
 
+<h2>Software Images</h2>
+<p>Below are some screenshots of the software</p>
 
 <div style="display: flex; overflow-x: scroll;">
   <img src="https://github.com/Jerson-Miranda/PapeleriaGomita/blob/master/Designs/views/I%20(1).png" alt="I1" style="width: 50%;">
