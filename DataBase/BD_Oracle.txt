@@ -1,0 +1,275 @@
+create table establecimiento(
+idEstablecimiento varchar(10) primary key not null,
+nombre varchar(70) not null,
+descripcion varchar(70) not null,
+calle varchar (30) not null,
+colonia varchar (30) not null,
+localidad varchar (30) not null,
+email varchar(70) not null,
+telefono varchar(14) not null,
+foto blob not null,
+foto2 blob not null
+);
+
+create table departamento(
+nombreDepartamento varchar(70) primary key not null,
+descripcion varchar(100) not null
+);
+
+create table cargo(
+nombreCargo varchar(50) primary key not null,
+regProducto varchar(2) not null,
+regVenta varchar(2) not null,
+regCompra varchar(2) not null,
+regCliente varchar(2) not null,
+regProveedor varchar(2) not null,
+regPersonal varchar(2) not null,
+conEstadistica varchar(2) not null,
+conVenta varchar(2) not null,
+conCompra varchar(2) not null,
+canVenta varchar(2) not null,
+canCompra varchar(2) not null,
+regCargo varchar(2) not null,
+configuracion varchar(2) not null
+);
+
+create table cliente(
+nombreCliente varchar(70) primary key not null,
+telefono varchar(14) not null,
+descuento int not null
+);
+
+create table proveedor(
+idProveedor varchar(10) primary key not null,
+nombre varchar(50) not null,
+descripcion varchar(50) not null,
+calle varchar (30) not null,
+colonia varchar (30) not null,
+localidad varchar (30) not null,
+telefono varchar(14) not null,
+correo varchar(70) not null,
+estado varchar(8) not null,
+foto blob not null
+);
+
+create table configuracion(
+idConfiguracion varchar(10) not null,
+color varchar(6) not null,
+version varchar(5) not null,
+fotoPatron blob not null,
+fotoPublicidad blob not null
+);
+
+create table usuario(
+idUsuario varchar(10) primary key not null,
+nombre varchar(30) not null,
+apellidoP varchar(25) not null,
+apellidoM varchar(25) not null,
+nombreCargo varchar(50) not null,
+telefono varchar(14) not null,
+email varchar(70) not null,
+usuario varchar(50) not null,
+contrasena varchar(12) not null,
+estado varchar(8) not null,
+sistema varchar(7) not null,
+foto blob not null,
+constraint fk_usuario_nombreCargo foreign key(nombreCargo) references cargo(nombreCargo) on delete cascade
+);
+
+create table producto(
+codigoBarra varchar(14) primary key not null,
+nombre varchar(50) not null,
+marca varchar(40) not null,
+nombreDepartamento varchar(50) not null,
+compra float not null,
+ganancia float not null,
+descuento int not null,
+venta float not null,
+stock int not null,
+stockmax int not null,
+stockmin int not null,
+favorito varchar(2) not null,
+estado varchar(8) not null,
+foto blob not null,
+constraint fk_producto_nombreDepartamento foreign key(nombreDepartamento) references departamento(nombreDepartamento) on delete cascade
+);
+
+create table venta(
+noVenta int primary key not null,
+semana int not null,
+fecha date not null,
+hora varchar(12) not null,
+nombreCliente varchar(70) not null,
+idUsuario varchar(10) not null,
+noProducto int not null,
+subTotal float not null,
+dtoProducto float not null,
+dtoGlobal float not null,
+total float not null,
+recibido float not null,
+cambio float not null,
+constraint fk_venta_nombreCliente foreign key(nombreCliente) references cliente(nombreCliente) on delete cascade,
+constraint fk_venta_idUsuario foreign key(idUsuario) references usuario(idUsuario) on delete cascade
+);
+
+create table compra(
+noCompra int primary key not null,
+semana int not null,
+fecha date not null,
+hora varchar(12) not null,
+idProveedor varchar(10) not null,
+idUsuario varchar(10) not null,
+noArticulo int not null,
+total float not null,
+constraint fk_compra_idProveedor foreign key(idProveedor) references proveedor(idProveedor) on delete cascade,
+constraint fk_compra_idUsuario foreign key(idUsuario) references usuario(idUsuario) on delete cascade
+);
+
+create table detalleventa(
+idVenta int primary key not null,
+noVenta int not null,
+cantidad int not null,
+codigoBarra varchar(14) not null,
+nombre varchar(40) not null,
+marca varchar(20) not null,
+precio float not null,
+descuento float not null,
+importe float not null,
+constraint fk_detalleventa_codigoBarra foreign key(codigoBarra) references producto(codigoBarra) on delete cascade,
+constraint fk_detalleventa_noVenta foreign key(noVenta) references venta(noVenta) on delete cascade
+);
+
+create table detallecompra(
+idCompra int primary key not null,
+noCompra int not null,
+cantidad int not null,
+nombre varchar(20) not null,
+marca varchar(20) not null,
+precio float not null,
+importe float not null,
+constraint fk_detallecompra_noCompra foreign key(noCompra) references compra(noCompra) on delete cascade
+);
+
+//------------------------------------------ AUTO INCREMENTS
+CREATE SEQUENCE  "GOMITA"."SALE"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+
+create or replace NONEDITIONABLE TRIGGER TRIGGERSALE
+BEFORE INSERT ON VENTA
+FOR EACH ROW
+BEGIN
+SELECT SALE.NEXTVAL INTO :NEW.NOVENTA FROM DUAL;
+END;
+
+CREATE SEQUENCE  "GOMITA"."DETAILSSALE"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+
+create or replace NONEDITIONABLE TRIGGER TRIGGERDETAILSSALE
+BEFORE INSERT ON DETALLEVENTA
+FOR EACH ROW
+BEGIN
+SELECT DETAILSSALE.NEXTVAL INTO :NEW.IDVENTA FROM DUAL;
+END;
+
+CREATE SEQUENCE  "GOMITA"."BUY"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+
+create or replace NONEDITIONABLE TRIGGER TRIGGERBUY
+BEFORE INSERT ON COMPRA
+FOR EACH ROW
+BEGIN
+SELECT BUY.NEXTVAL INTO :NEW.NOCOMPRA FROM DUAL;
+END;
+
+CREATE SEQUENCE  "GOMITA"."DETAILSBUY"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+
+create or replace NONEDITIONABLE TRIGGER TRIGGERDETAILSBUY
+BEFORE INSERT ON DETALLECOMPRA
+FOR EACH ROW
+BEGIN
+SELECT DETAILSBUY.NEXTVAL INTO :NEW.IDCOMPRA FROM DUAL;
+END;
+
+
+//----------------------------------------- PROCEDURES
+create or replace NONEDITIONABLE PROCEDURE UPDATECUSTOMER 
+(
+  NAME IN VARCHAR2 
+, PHONE IN VARCHAR2 
+, DISCOUNT IN NUMBER 
+) AS 
+BEGIN
+  UPDATE CLIENTE SET TELEFONO=PHONE,DESCUENTO=DISCOUNT WHERE NOMBRECLIENTE=NAME;
+END UPDATECUSTOMER;
+
+create or replace NONEDITIONABLE PROCEDURE UPDATEJOB 
+(
+  NAMEE IN VARCHAR2 
+, ONEE IN VARCHAR2 
+, TWO IN VARCHAR2 
+, THREE IN VARCHAR2 
+, FOUR IN VARCHAR2 
+, FIVE IN VARCHAR2 
+, SIX IN VARCHAR2 
+, SEVEN IN VARCHAR2 
+, EIGHT IN VARCHAR2 
+, NINE IN VARCHAR2 
+, TEN IN VARCHAR2 
+, ELEVEN IN VARCHAR2 
+, TWENTY IN VARCHAR2 
+, TWENTYONE IN VARCHAR2 
+) AS 
+BEGIN
+  UPDATE CARGO SET REGPRODUCTO=ONEE,REGVENTA=TWO,REGCOMPRA=THREE,REGCLIENTE=FOUR,REGPROVEEDOR=FIVE,REGPERSONAL=SIX,CONESTADISTICA=SEVEN,CONVENTA=EIGHT,CONCOMPRA=NINE,CANVENTA=TEN,CANCOMPRA=ELEVEN,REGCARGO=TWENTY,CONFIGURACION=TWENTYONE WHERE NOMBRECARGO=NAMEE;
+END UPDATEJOB;
+
+create or replace NONEDITIONABLE PROCEDURE UPDATEPRODUCT 
+(
+  CODE IN VARCHAR2 
+, NAMEE IN VARCHAR2 
+, BRAND IN VARCHAR2 
+, DEPARTMENT IN VARCHAR2 
+, BUY IN FLOAT 
+, GAIN IN NUMBER 
+, DISCOUNT IN NUMBER 
+, SALE IN FLOAT
+, STOC IN NUMBER
+, STOCMAX IN NUMBER 
+, STOCMIN IN NUMBER  
+, FAVORITE IN VARCHAR2 
+, STATUS IN VARCHAR2 
+) AS 
+BEGIN
+UPDATE PRODUCTO SET NOMBRE=NAMEE,MARCA=BRAND,NOMBREDEPARTAMENTO=DEPARTMENT,COMPRA=BUY,GANANCIA=GAIN,DESCUENTO=DISCOUNT,VENTA=SALE,STOCK=STOC,STOCKMAX=STOCMAX,STOCKMIN=STOCMIN,FAVORITO=FAVORITE,ESTADO=STATUS WHERE CODIGOBARRA=CODE;
+END UPDATEPRODUCT;
+
+create or replace NONEDITIONABLE PROCEDURE UPDATESTAFF 
+(
+  ID IN VARCHAR2 
+, NAME IN VARCHAR2 
+, AP IN VARCHAR2 
+, AM IN VARCHAR2 
+, JOB IN VARCHAR2 
+, PHONE IN VARCHAR2 
+, EMAILL IN VARCHAR2 
+, USERR IN VARCHAR2 
+, PASS IN VARCHAR2 
+, STATUS IN VARCHAR2
+, SYSTEM IN VARCHAR2 
+) AS 
+BEGIN
+  UPDATE USUARIO SET NOMBRE=NAME,APELLIDOP=AP,APELLIDOM=AM,NOMBRECARGO=JOB,TELEFONO=PHONE,EMAIL=EMAILL,USUARIO=USERR,CONTRASENA=PASS,ESTADO=STATUS,SISTEMA=SYSTEM WHERE IDUSUARIO=ID;
+END UPDATESTAFF;
+
+create or replace NONEDITIONABLE PROCEDURE UPDATESUPPLIER 
+(
+  ID IN VARCHAR2 
+, NAME IN VARCHAR2 
+, DESCRIPTION IN VARCHAR2 
+, STREET IN VARCHAR2 
+, COLONY IN VARCHAR2 
+, LOCATION IN VARCHAR2 
+, PHONE IN VARCHAR2 
+, EMAIL IN VARCHAR2 
+, STATUS IN VARCHAR2 
+) AS 
+BEGIN
+  UPDATE PROVEEDOR SET NOMBRE=NAME,DESCRIPCION=DESCRIPTION,CALLE=STREET,COLONIA=COLONY,LOCALIDAD=LOCATION,TELEFONO=PHONE,CORREO=EMAIL,ESTADO=STATUS WHERE IDPROVEEDOR=ID;
+END UPDATESUPPLIER;
