@@ -26,7 +26,7 @@ If you wish to contribute to this project, please fork the repository and submit
 
 ## Contact
 
-If you have any questions or suggestions, feel free to open an issue on GitHub or send me an email at [your email here].
+If you have any questions or suggestions, feel free to open an issue on GitHub or send me an email at miranda.diaz.jerson.rai@outlook.com.
 
 <h2>Software Images</h2>
 <p>Below are some screenshots of the software</p>
